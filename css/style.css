@@ -55,10 +55,27 @@ input[type="submit"]:hover {
 
 /* Paragrafi specifici */
 #date_hour, #ss, #mp {
-    font-size: 1.2em;
+    font-size: 1.5em;
     margin-bottom: 20px;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     background-color: #fff;
+}
+
+/* Responsività */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    h1 {
+        font-size: 1.8em;
+        margin-bottom: 10px;
+    }
+    p, label, input[type="text"], input[type="submit"], #date_hour, #ss, #mp {
+        font-size: 1.5em; /* Aumenta la dimensione del testo su dispositivi mobili */
+    }
+    input[type="text"], input[type="submit"] {
+        width: 100%;
+    }
 }
