@@ -2,7 +2,7 @@ const dateJ = new Date();
 
 const months = ["Gennaio", "Febraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
 
-const days = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
+const days = ["Domenica", "Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato"];
 //partenze ogni 10 minuti
 var monte_po_lun_gio0640_1500 = [];
 
@@ -43,9 +43,11 @@ function initDateArrays(destArray, startDate, endDate, minutes){
     var currentDate = startDate;
     var currentDate_time = startDate.getTime();
     var endDate_time = endDate.getTime();
+    var h_and_m;
     while(currentDate_time <= endDate_time){
         
-        window[destArray].push(currentDate_time);
+        h_and_m = currentDate.toTimeString();
+        window[destArray].push(h_and_m);
         
         addMinutes(currentDate, minutes);
         currentDate_time = currentDate.getTime();
@@ -276,7 +278,7 @@ function initDateArrays(destArray, startDate, endDate, minutes){
     endDate = new Date();
     startDate.setSeconds(0); 
     endDate.setSeconds(0);
-    startDate.setMilliseconds(0); 
+    startDate.setMilliseconds(0);
     endDate.setMilliseconds(0);
     startDate.setHours(08);
     startDate.setMinutes(56);
@@ -287,7 +289,9 @@ function initDateArrays(destArray, startDate, endDate, minutes){
 
 
 function getStesicoroNextRun(dateToCheck){
-    var timeToCheck = dateToCheck.getTime()
+    /* var timeToCheck = dateToCheck.getTime() */
+    var timeToCheck = dateToCheck.toTimeString();
+    var found = 0 ;
     var index;
     var checking;
     
@@ -414,7 +418,8 @@ function getStesicoroNextRun(dateToCheck){
 }
 
 function getMontePoNextRun(dateToCheck){
-var timeToCheck = dateToCheck.getTime()
+/* var timeToCheck = dateToCheck.getTime() */
+var timeToCheck = dateToCheck.toTimeString();
     var index;
     var checking;
     var found=0;
@@ -538,6 +543,39 @@ var timeToCheck = dateToCheck.getTime()
     return nextRun;
 }
 
+function setHourMin(date,hour,min){
+    date.setMinutes(min);
+    date.setHours(hour); 
+}
+
+function searchTrains(event){
+    event.preventDefault();
+    var s_date = document.getElementById('date_search');
+    var ss_result = document.getElementById('ssr');
+    var ms_result = document.getElementById('msr');
+    
+    var date_to_check = new Date(s_date.value);
+    
+    var dateMP = new Date(date_to_check.getTime());
+    var dateSS = new Date(date_to_check.getTime());
+    
+    var timeMP = getMontePoNextRun(date_to_check);
+    var timeSS = getStesicoroNextRun(date_to_check);
+    
+    console.log(date_to_check);
+    
+    timeMP = timeMP.split(" ")[0].split(":");
+    timeSS = timeSS.split(" ")[0].split(":");
+    
+
+    setHourMin(dateMP,timeMP[0],timeMP[1]);
+    setHourMin(dateSS,timeSS[0],timeSS[1]);
+    
+    ss_result.innerHTML=days[dateSS.getDay()]+" "+(dateSS.getDate())+" "+months[dateSS.getMonth()]+" "+dateSS.getFullYear()+ "<br>"+ dateSS.getHours() +"h:"+ dateSS.getMinutes()+"m";
+    
+    ms_result.innerHTML=days[dateMP.getDay()]+" "+(dateMP.getDate())+" "+months[dateMP.getMonth()]+" "+dateMP.getFullYear()+ "<br>"+ dateMP.getHours() +"h:"+ dateMP.getMinutes()+"m";
+}
+
 
 
 window.onload = function() {
@@ -546,19 +584,33 @@ window.onload = function() {
     const mp_start = document.getElementById('mp');
     //initRunsDates();
     
-    /* const c_hour = document.getElementById('hour'); */
     
-    //c_date.innerHTML= dateJ.getFullYear()+" "+months[dateJ.getMonth()]+" "+dateJ.getDay()+"_"+days[dateJ.getDay()];
-    c_date_hour.innerHTML= days[dateJ.getDay()]+" "+dateJ.getDay()+" "+months[dateJ.getMonth()]+" "+dateJ.getFullYear()+ " "+ dateJ.getHours() +"h:"+ dateJ.getMinutes()+"m";
-    /* c_hour.innerHTML= */
-    var dateMP = getMontePoNextRun(dateJ);
-    var dateSS = getStesicoroNextRun(dateJ);
-/*     console.log();
-    console.log(new Date(dateMP)); */
-    dateMP = new Date(dateMP);
-    dateSS = new Date(dateSS);
-    ss_start.innerHTML=days[dateSS.getDay()]+" "+dateSS.getDay()+" "+months[dateSS.getMonth()]+" "+dateSS.getFullYear()+ "<br>"+ dateSS.getHours() +"h:"+ dateSS.getMinutes()+"m";
-    mp_start.innerHTML=days[dateMP.getDay()]+" "+dateMP.getDay()+" "+months[dateMP.getMonth()]+" "+dateMP.getFullYear()+ "<br>"+ dateMP.getHours() +"h:"+ dateMP.getMinutes()+"m";
+    c_date_hour.innerHTML= days[dateJ.getDay()]+" "+(dateJ.getDate())+" "+months[dateJ.getMonth()]+" "+dateJ.getFullYear()+ " "+ dateJ.getHours() +"h:"+ dateJ.getMinutes()+"m";
+    var timeMP = getMontePoNextRun(dateJ);
+    var timeSS = getStesicoroNextRun(dateJ);
+    
+    var dateMP = new Date(dateJ.getTime());
+    var dateSS = new Date(dateJ.getTime());
+    
+    timeMP = timeMP.split(" ")[0].split(":");
+    timeSS = timeSS.split(" ")[0].split(":");
+    
+    setHourMin(dateMP,timeMP[0],timeMP[1]);
+    setHourMin(dateSS,timeSS[0],timeSS[1]);
+    
+    ss_start.innerHTML=days[dateSS.getDay()]+" "+(dateSS.getDate())+" "+months[dateSS.getMonth()]+" "+dateSS.getFullYear()+ "<br>"+ dateSS.getHours() +"h:"+ dateSS.getMinutes()+"m";
+    mp_start.innerHTML=days[dateMP.getDay()]+" "+(dateMP.getDate())+" "+months[dateMP.getMonth()]+" "+dateMP.getFullYear()+ "<br>"+ dateMP.getHours() +"h:"+ dateMP.getMinutes()+"m";
+    
+    var s_button = document.getElementById('search');
+    var s_date = document.getElementById('date_search');
+    
+    s_date.value = dateJ.toISOString().substr(0, 10)+"T"+dateJ.getHours()+":"+(dateJ.getMinutes() < 10 ? '0' : '')+dateJ.getMinutes();
+    
+    var ss_result = document.getElementById('ssr');
+    var ms_result = document.getElementById('msr');
     
     
+    
+    ss_result.innerHTML=days[dateSS.getDay()]+" "+(dateSS.getDate())+" "+months[dateSS.getMonth()]+" "+dateSS.getFullYear()+ "<br>"+ dateSS.getHours() +"h:"+ dateSS.getMinutes()+"m";
+    ms_result.innerHTML=days[dateMP.getDay()]+" "+(dateMP.getDate())+" "+months[dateMP.getMonth()]+" "+dateMP.getFullYear()+ "<br>"+ dateMP.getHours() +"h:"+ dateMP.getMinutes()+"m"; 
 }
